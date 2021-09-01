@@ -1,5 +1,5 @@
 {
-  "name": "testvttmodule",
+  "name": "testvttmodulegit",
   "title": "Test Module",
   "description": "",
   "version": "This is auto replaced",
@@ -9,9 +9,9 @@
   "compatibleCoreVersion": "0.8.8",
   "authors": [
     {
-      "name": "Test FVTT Module",
+      "name": "dacweb",
       "url": "https://github.com/dacwebb/testfvttmodule",
-      "discord": "Liris#1111"
+      "discord": "TBD#0000"
     }
   ],
   "dependencies": [
