@@ -7,15 +7,21 @@ class ToDoList{
     * @property {boolean} isDone - Marks whether the todo is done.
     * @property {string} userId - The user who owns this todo.
     */
-       static ID = 'todo-list';
-   
-       static FLAGS = {
-           TODOS: 'todos'
-       }
-       static TEMPLATES = {
-           TODOLIST: `modules/${this.ID}/templates/todo-list.hbs`
-       }
-   }
+    static ID = 'todo-list';
+
+    static FLAGS = {
+        TODOS: 'todos'
+    }
+    static TEMPLATES = {
+        TODOLIST: `modules/${this.ID}/templates/todo-list.hbs`
+    }
+    static initialize() {
+        this.toDoListConfig = new ToDoListConfig();
+    }
+}
+Hooks.once('init', () => {
+    ToDoList.initialize();
+});
 Hooks.on('renderPlayerList', (playerList, html) => {
     // find the element which has our logged in user's id
   const loggedInUserListItem = html.find(`[data-user-id="${game.userId}"]`)
@@ -31,7 +37,12 @@ Hooks.on('renderPlayerList', (playerList, html) => {
   loggedInUserListItem.append(
     `<button type='button' class='todo-list-icon-button' title='${tooltip}'><i class='fas fa-tasks'></i></button>`
   );
+  html.on('click', '.todo-list-icon-button', (event) => {
+    const userId = $(event.currentTarget).parents('[data-user-id]')?.data()?.userId;
+    ToDoList.toDoListConfig.render(true, {userId});
+  });
 });
+
 class ToDoListData {
     // all todos for all users
     static get allToDos() {
@@ -104,6 +115,42 @@ class ToDoListData {
         return game.users.get(relevantToDo.userId)?.setFlag(ToDoList.ID, ToDoList.FLAGS.TODOS, keyDeletion);
     }
 }
+
+class ToDoListConfig extends FormApplication {
+    static get defaultOptions() {
+        const defaults = super.defaultOptions;
+      
+        const overrides = {
+          height: 'auto',
+          id: 'todo-list',
+          template: ToDoList.TEMPLATES.TODOLIST,
+          title: 'To Do List',
+          userId: game.userId,
+          closeOnSubmit: false, // do not close when submitted
+          submitOnChange: true // submit when any input changes
+        };
+      
+        const mergedOptions = foundry.utils.mergeObject(defaults, overrides);
+        
+        return mergedOptions;
+      }
+      async _updateObject(event, formData) {
+        const expandedData = foundry.utils.expandObject(formData);
+    
+        await ToDoListData.updateUserToDos(this.options.userId, expandedData);
+        ToDoList.log(false, 'saving', {
+            formData
+          });
+        this.render();
+      }
+      getData(options) {
+        return {
+          todos: ToDoListData.getToDosForUser(options.userId)
+        }
+      }
+}
+
+
 Hooks.once('init', async function() {
     console.log('testfvttmodule | Hello World of FVTT (v3)!');
 
