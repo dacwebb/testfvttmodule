@@ -1,5 +1,5 @@
 Hooks.once('init', async function() {
-    console.log('testfvttmodule | Hello World of FVTT!');
+    console.log('testfvttmodule | Hello World of FVTT (v2)!');
 
 });
 
