@@ -24,6 +24,13 @@ Hooks.on('renderPlayerList', (playerList, html) => {
   loggedInUserListItem.append(
     "<button type='button' class='todo-list-icon-button'><i class='fas fa-tasks'></i></button>"
   );
+  // create localized tooltip
+  const tooltip = game.i18n.localize('TODO-LIST.button-title');
+
+  // insert a button at the end of this element
+  loggedInUserListItem.append(
+    `<button type='button' class='todo-list-icon-button' title='${tooltip}'><i class='fas fa-tasks'></i></button>`
+  );
 });
 class ToDoListData {
     // all todos for all users
