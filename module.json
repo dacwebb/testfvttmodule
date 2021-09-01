@@ -1,5 +1,5 @@
 {
-  "name": "testvttmodulegit",
+  "name": "testvtt",
   "title": "Test Module",
   "description": "",
   "version": "This is auto replaced",
@@ -25,7 +25,7 @@
   ],
   "scripts": [
     "/scripts/lib/lib.js",
-    "/scripts/testfvttmodule.js"
+    "/scripts/testvtt.js"
   ],
   "styles": [
     "/styles/module.css"
