@@ -1,6 +1,9 @@
 name: Release Creation
 
-on: push
+on: 
+  push:
+    tags:
+    - '*'
 
 jobs:
   build:
