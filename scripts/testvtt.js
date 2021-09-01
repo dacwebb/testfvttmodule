@@ -16,6 +16,15 @@ class ToDoList{
            TODOLIST: `modules/${this.ID}/templates/todo-list.hbs`
        }
    }
+Hooks.on('renderPlayerList', (playerList, html) => {
+    // find the element which has our logged in user's id
+  const loggedInUserListItem = html.find(`[data-user-id="${game.userId}"]`)
+  
+  // insert a button at the end of this element
+  loggedInUserListItem.append(
+    "<button type='button' class='todo-list-icon-button'><i class='fas fa-tasks'></i></button>"
+  );
+});
 class ToDoListData {
     // all todos for all users
     static get allToDos() {
@@ -56,7 +65,6 @@ class ToDoListData {
     // update a specific todo by id with the provided updateData
     static updateToDo(toDoId, updateData) {
         const relevantToDo = this.allToDos[toDoId];
-    
         // construct the update to send
         const update = {
             [toDoId]: updateData
@@ -65,9 +73,29 @@ class ToDoListData {
         // update the database with the updated ToDo list
         return game.users.get(relevantToDo.userId)?.setFlag(ToDoList.ID, ToDoList.FLAGS.TODOS, update);
     }
-  
+    // update one or many ToDos for a user
+    static updateUserToDos(userId, updateData) {
+        return game.users.get(userId)?.setFlag(ToDoList.ID, ToDoList.FLAGS.TODOS, updateData);
+    }
+    /* usage:
+    *ToDoListData.updateUserToDos('acfkPFqSPy01uJ3p', {
+    *"gogdv4qvgydcr7sh": { isDone: true },
+    *"yndgcuoq147g37nz": { isDone: true },
+    *});
+    */
+    
     // delete a specific todo by id
-    static deleteToDo(toDoId) {}
+    static deleteToDo(toDoId) {
+        const relevantToDo = this.allToDos[toDoId];
+
+        // Foundry specific syntax required to delete a key from a persisted object in the database
+        const keyDeletion = {
+        [`-=${toDoId}`]: null
+        }
+
+        // update the database with the updated ToDo list
+        return game.users.get(relevantToDo.userId)?.setFlag(ToDoList.ID, ToDoList.FLAGS.TODOS, keyDeletion);
+    }
 }
 Hooks.once('init', async function() {
     console.log('testfvttmodule | Hello World of FVTT (v3)!');
