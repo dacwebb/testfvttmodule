@@ -24,7 +24,8 @@
     "/scripts/module.js"
   ],
   "scripts": [
-    "/scripts/lib/lib.js"
+    "/scripts/lib/lib.js",
+    "/scripts/testfvttmodule.js"
   ],
   "styles": [
     "/styles/module.css"
