@@ -54,7 +54,7 @@ class ToDoListData {
     }
   
     // update a specific todo by id with the provided updateData
-    static updateToDo(todoId, updateData) {
+    static updateToDo(toDoId, updateData) {
         const relevantToDo = this.allToDos[toDoId];
     
         // construct the update to send
@@ -67,7 +67,7 @@ class ToDoListData {
     }
   
     // delete a specific todo by id
-    static deleteToDo(todoId) {}
+    static deleteToDo(toDoId) {}
 }
 Hooks.once('init', async function() {
     console.log('testfvttmodule | Hello World of FVTT (v3)!');
