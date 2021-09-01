@@ -18,7 +18,18 @@ class ToDoList{
    }
 class ToDoListData {
     // all todos for all users
-    static get allToDos() {}
+    static get allToDos() {
+        const allToDos = game.users.reduce((accumulator, user) => {
+            const userTodos = this.getToDosForUser(user.id);
+        
+                return {
+                    ...accumulator,
+                    ...userTodos
+                }
+            }, {});
+        
+            return allToDos;
+    }
   
     // get all todos for a given user
     static getToDosForUser(userId) {
@@ -43,7 +54,17 @@ class ToDoListData {
     }
   
     // update a specific todo by id with the provided updateData
-    static updateToDo(todoId, updateData) {}
+    static updateToDo(todoId, updateData) {
+        const relevantToDo = this.allToDos[toDoId];
+    
+        // construct the update to send
+        const update = {
+            [toDoId]: updateData
+        }
+    
+        // update the database with the updated ToDo list
+        return game.users.get(relevantToDo.userId)?.setFlag(ToDoList.ID, ToDoList.FLAGS.TODOS, update);
+    }
   
     // delete a specific todo by id
     static deleteToDo(todoId) {}
