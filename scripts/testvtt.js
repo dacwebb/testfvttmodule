@@ -25,11 +25,6 @@ Hooks.once('init', () => {
 Hooks.on('renderPlayerList', (playerList, html) => {
     // find the element which has our logged in user's id
   const loggedInUserListItem = html.find(`[data-user-id="${game.userId}"]`)
-  
-  // insert a button at the end of this element
-  loggedInUserListItem.append(
-    "<button type='button' class='todo-list-icon-button'><i class='fas fa-tasks'></i></button>"
-  );
   // create localized tooltip
   const tooltip = game.i18n.localize('TODO-LIST.button-title');
 
@@ -128,26 +123,56 @@ class ToDoListConfig extends FormApplication {
           userId: game.userId,
           closeOnSubmit: false, // do not close when submitted
           submitOnChange: true // submit when any input changes
+          
         };
-      
+        
         const mergedOptions = foundry.utils.mergeObject(defaults, overrides);
         
         return mergedOptions;
-      }
-      async _updateObject(event, formData) {
+    }
+    activateListeners(html) {
+        super.activateListeners(html);
+        html.on('click', "[data-action]", this._handleButtonClick.bind(this));
+        
+    }
+    async _handleButtonClick(event) {
+        const clickedElement = $(event.currentTarget);
+        const action = clickedElement.data().action;
+        const toDoId = clickedElement.parents('[data-todo-id]')?.data()?.todoId;
+        
+        ToDoList.log(false, 'Button Clicked!', { this: this, action, toDoId });
+        switch (action) {
+            case 'create': {
+              await ToDoListData.createToDo(this.options.userId);
+              this.render();
+              break;
+            }
+      
+            case 'delete': {
+              await ToDoListData.deleteToDo(toDoId);
+              this.render();
+              break;
+            }
+      
+            default:
+              ToDoList.log(false, 'Invalid action detected', action);
+          }
+    }  
+    async _updateObject(event, formData) {
         const expandedData = foundry.utils.expandObject(formData);
-    
+
         await ToDoListData.updateUserToDos(this.options.userId, expandedData);
         ToDoList.log(false, 'saving', {
-            formData
-          });
+            formData,
+            expandedData
+            });
         this.render();
-      }
-      getData(options) {
-        return {
-          todos: ToDoListData.getToDosForUser(options.userId)
-        }
-      }
+    }
+    getData(options) {
+    return {
+        todos: ToDoListData.getToDosForUser(options.userId)
+    }
+    }
 }
 
 
